@@ -159,7 +159,8 @@ func NewRegistry(ctx context.Context, config *configuration.Configuration) (*Reg
 	}
 
 	server := &http.Server{
-		Handler: handler,
+		Handler:           handler,
+		ReadHeaderTimeout: 20 * time.Second,
 	}
 
 	return &Registry{
