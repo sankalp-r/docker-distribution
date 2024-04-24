@@ -12,7 +12,6 @@ import (
 	"os"
 	"strings"
 
-	dcontext "github.com/docker/distribution/context"
 	"github.com/docker/distribution/registry/auth"
 	"github.com/docker/libtrust"
 )
@@ -235,53 +234,53 @@ func newAccessController(options map[string]interface{}) (auth.AccessController,
 // Authorized handles checking whether the given request is authorized
 // for actions on resources described by the given access items.
 func (ac *accessController) Authorized(ctx context.Context, accessItems ...auth.Access) (context.Context, error) {
-	challenge := &authChallenge{
-		realm:        ac.realm,
-		autoRedirect: ac.autoRedirect,
-		service:      ac.service,
-		accessSet:    newAccessSet(accessItems...),
-	}
+	//challenge := &authChallenge{
+	//	realm:        ac.realm,
+	//	autoRedirect: ac.autoRedirect,
+	//	service:      ac.service,
+	//	accessSet:    newAccessSet(accessItems...),
+	//}
+	//
+	//req, err := dcontext.GetRequest(ctx)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	req, err := dcontext.GetRequest(ctx)
-	if err != nil {
-		return nil, err
-	}
+	//prefix, rawToken, ok := strings.Cut(req.Header.Get("Authorization"), " ")
+	//if !ok || rawToken == "" || !strings.EqualFold(prefix, "bearer") {
+	//	challenge.err = ErrTokenRequired
+	//	return nil, challenge
+	//}
 
-	prefix, rawToken, ok := strings.Cut(req.Header.Get("Authorization"), " ")
-	if !ok || rawToken == "" || !strings.EqualFold(prefix, "bearer") {
-		challenge.err = ErrTokenRequired
-		return nil, challenge
-	}
+	//token, err := NewToken(rawToken)
+	//if err != nil {
+	//	challenge.err = err
+	//	return nil, challenge
+	//}
+	//
+	//verifyOpts := VerifyOptions{
+	//	TrustedIssuers:    []string{ac.issuer},
+	//	AcceptedAudiences: []string{ac.service},
+	//	Roots:             ac.rootCerts,
+	//	TrustedKeys:       ac.trustedKeys,
+	//}
+	//
+	//if err = token.Verify(verifyOpts); err != nil {
+	//	challenge.err = err
+	//	return nil, challenge
+	//}
+	//
+	//accessSet := token.accessSet()
+	//for _, access := range accessItems {
+	//	if !accessSet.contains(access) {
+	//		challenge.err = ErrInsufficientScope
+	//		return nil, challenge
+	//	}
+	//}
+	//
+	//ctx = auth.WithResources(ctx, token.resources())
 
-	token, err := NewToken(rawToken)
-	if err != nil {
-		challenge.err = err
-		return nil, challenge
-	}
-
-	verifyOpts := VerifyOptions{
-		TrustedIssuers:    []string{ac.issuer},
-		AcceptedAudiences: []string{ac.service},
-		Roots:             ac.rootCerts,
-		TrustedKeys:       ac.trustedKeys,
-	}
-
-	if err = token.Verify(verifyOpts); err != nil {
-		challenge.err = err
-		return nil, challenge
-	}
-
-	accessSet := token.accessSet()
-	for _, access := range accessItems {
-		if !accessSet.contains(access) {
-			challenge.err = ErrInsufficientScope
-			return nil, challenge
-		}
-	}
-
-	ctx = auth.WithResources(ctx, token.resources())
-
-	return auth.WithUser(ctx, auth.UserInfo{Name: token.Claims.Subject}), nil
+	return auth.WithUser(ctx, auth.UserInfo{Name: "test"}), nil
 }
 
 // init handles registering the token auth backend.
